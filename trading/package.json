@@ -8,11 +8,14 @@
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "generate-client-cowswap": "swagger-typescript-api generate -p https://raw.githubusercontent.com/cowprotocol/services/main/crates/orderbook/openapi.yml -o ./src/generated/cowswap -n api.ts"
+    "generate-client-cowswap": "swagger-typescript-api generate -p https://raw.githubusercontent.com/cowprotocol/services/main/crates/orderbook/openapi.yml -o ./src/generated/cowswap -n api.ts",
+    "generate-client-nearintents": "swagger-typescript-api generate -p https://1click.chaindefuser.com/docs/v0/openapi.yaml -o ./src/generated/nearintents -n api.ts"
   },
   "author": "Nebula",
   "license": "ISC",
   "dependencies": {
+    "@cowprotocol/cow-sdk": "^5.10.3",
+    "@defuse-protocol/one-click-sdk-typescript": "^0.1.1",
     "express": "^4.18.2"
   },
   "devDependencies": {

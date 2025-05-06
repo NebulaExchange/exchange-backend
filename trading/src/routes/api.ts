@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import * as quoteController from '../controllers/quoteController';
+import { validateQuoteRequest } from '../validation/quoteRequestValidation';
 
 const router = Router();
 
-//router.post('/quote', quoteController.createExample);
-router.get('/example', quoteController.getExample);
+router.post('/quote', validateQuoteRequest, quoteController.getQuote);
 
 export default router;

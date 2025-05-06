@@ -1,16 +1,24 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { QuoteRequest } from '../models/QuoteRequestModel';
+import { cowswapService } from '../services/cowswapService';
+import { nearintentService } from '../services/nearIntentService';
 
-// GET /api/example
-export const getExample = (req: Request, res: Response): void => {
+// POST /api/quote
+export const getQuote = async (req: QuoteRequest, res: Response):  Promise<void> => 
+{
+  if (!req.data) {
+    res.status(500);
+    return;
+  }
+
+  const cowQuote = await cowswapService.GetQuote(req.data);
+  const nearQuote = await nearintentService.GetQuote(req.data);
   res.status(200).json({
     success: true,
-    message: 'Example endpoint working correctly!',
+    message: "OK",
     data: {
-      items: [
-        { id: 1, name: 'Item 1' },
-        { id: 2, name: 'Item 2' },
-        { id: 3, name: 'Item 3' }
-      ]
-    }
+      cowswapQuote: cowQuote,
+      nearIntentQuote: nearQuote,
+    },
   });
 };

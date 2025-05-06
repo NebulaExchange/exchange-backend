@@ -1,20 +1,30 @@
-import { Api, OrderQuoteResponse, OrderQuoteRequest } from '../generated/cowswap/api';
+
+import { OrderBookApi, OrderQuoteSideKindSell, SupportedChainId } from '@cowprotocol/cow-sdk'
+import { QuoteRequestModel } from '../models/QuoteRequestModel'
+import { QuoteResponseModel } from '../models/QuoteResponseModel'
 
 class CowswapService {
-  private api: Api<undefined>;
-
-  constructor(baseUrl: string = 'https://api.cow.fi/mainnet') {
-    this.api = new Api({
-      baseUrl: baseUrl,
-    });
-  }
-
-  async getOrders(request: OrderQuoteRequest): Promise<OrderQuoteResponse> {
+  async GetQuote(request: QuoteRequestModel): Promise<QuoteResponseModel> {
     try {
-      const { data } = await this.api.api.v1QuoteCreate(request);
-      return data;
+      const orderBookApi = new OrderBookApi({
+        chainId: SupportedChainId.MAINNET,
+      });
+
+      const quoteRequest = {
+        sellToken: request.tokenFrom,
+        buyToken: request.tokenTo,
+        from: request.account,
+        receiver: request.account,
+        sellAmountBeforeFee: request.amountFrom,
+        kind: OrderQuoteSideKindSell.SELL,
+      };
+      
+      const { quote } = await orderBookApi.getQuote(quoteRequest);
+      return {
+        originalQuote: quote,
+        amountTo: quote.buyAmount,
+      };
     } catch (error) {
-      console.error('Error fetching quote:', error);
       throw new Error('Failed to fetch orders from CoW Protocol API');
     }
   }
