@@ -31,14 +31,14 @@ export const validateQuoteRequest = (req: QuoteRequest, res: Response, next: Nex
 // Example validation function - replace with your actual validation
 function isValid(data: QuoteRequestModel): boolean {
   // Implement your validation logic here
-  return !!(data && data.account);
+  return !!(data && data.accountFrom);
 }
 
 // Helper function to get validation errors
 function getValidationErrors(data: any): object {
   const errors: Record<string, string> = {};
   
-  if (!data.account) errors.account = 'account is missing';
+  if (!data.accountFrom) errors.accountFrom = 'accountFrom missing';
   
   return errors;
 }
