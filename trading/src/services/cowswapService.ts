@@ -3,6 +3,8 @@ import { QuoteRequestModel } from '../models/QuoteRequestModel'
 import { QuoteResponseModel } from '../models/QuoteResponseModel'
 import { TokenModel } from '../models/TokenModel';
 import CowswapTokens from '../data/cowswapTokens';
+import { CowswapOrder } from '../models/OrderRequestModel'
+import { OrderResponseModel } from '../models/OrderResponseModel'
 
 class CowswapService {
   async GetQuote(
@@ -79,6 +81,25 @@ class CowswapService {
         return 42161;
       default:
         return 0;
+    }
+  }
+
+  async CreateOrder(
+    request: CowswapOrder
+  ): Promise<OrderResponseModel | null> {
+    try {
+      const orderBookApi = new OrderBookApi({
+        chainId: SupportedChainId.MAINNET,
+      });
+      
+      const orderId = await orderBookApi.sendOrder(request);
+      return {
+        orderType: 'cowswap',
+        orderId
+      };
+    } catch (error) {
+      console.error('Error creating order:', error);
+      return null;
     }
   }
 }
