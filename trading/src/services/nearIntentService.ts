@@ -3,6 +3,8 @@ import { QuoteRequestModel } from '../models/QuoteRequestModel'
 import { QuoteResponseModel } from '../models/QuoteResponseModel'
 import { TokenModel } from '../models/TokenModel';
 import NearIntentTokens from '../data/nearIntentTokens';
+import { NearIntentsOrder } from '../models/OrderRequestModel';
+import { OrderResponseModel } from '../models/OrderResponseModel';
 
 class NearIntentService {
   async GetQuote(
@@ -46,6 +48,22 @@ class NearIntentService {
       console.log(error);
       return null;
       //throw new Error("Failed to fetch orders from NEAR Intents API");
+    }
+  }
+
+  async CreateOrder(
+    request: NearIntentsOrder
+  ): Promise<OrderResponseModel | null> {
+    try {
+      await OneClickService.submitDepositTx(request);
+      return {
+        orderType: 'nearIntent',
+        // although there is txHash, near intents api use depositAddress to check order status
+        orderId: request.depositAddress,
+      };
+    } catch (error) {
+      console.log(error);
+      return null;
     }
   }
 
