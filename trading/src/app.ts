@@ -1,6 +1,9 @@
 import express, { Application } from 'express';
 import cors from 'cors';
-import apiRoutes from './routes/api';
+import { RegisterRoutes } from './routes'; // tsoa-generated routes
+import path from 'path';
+import fs from 'fs';
+import swaggerUi from 'swagger-ui-express';
 
 const app: Application = express();
 
@@ -9,12 +12,19 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use('/api', apiRoutes);
+// tsoa API routes
+RegisterRoutes(app); // <-- Register tsoa routes here
 
-// Basic home route
-app.get('/', (req, res) => {
-  res.send('Express TypeScript API is running');
+// Serve tsoa-generated Swagger JSON
+app.get('/swagger.json', (_req, res) => {
+  const swaggerPath = path.join(__dirname, './swagger.json');
+  const swaggerFile = fs.readFileSync(swaggerPath, 'utf8');
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerFile);
 });
+
+// Serve Swagger UI at /docs
+const swaggerDocument = require('./swagger.json');
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 export default app;

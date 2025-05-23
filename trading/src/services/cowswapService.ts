@@ -15,7 +15,7 @@ class CowswapService {
         chainId: SupportedChainId.MAINNET,
       });
 
-      const { quote } = await orderBookApi.getQuote({
+      const quote = await orderBookApi.getQuote({
         sellToken: request.tokenFrom,
         buyToken: request.tokenTo,
         from: request.accountFrom,
@@ -24,9 +24,11 @@ class CowswapService {
         kind: OrderQuoteSideKindSell.SELL,
         
       });
+
       return {
         originalQuote: quote,
-        amountTo: quote.buyAmount,
+        amountTo: quote.quote.buyAmount,
+        quoteSource: 'COWSWAP'
       };
     } catch (error) {
       return null;

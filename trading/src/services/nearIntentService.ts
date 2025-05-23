@@ -43,6 +43,7 @@ class NearIntentService {
       return {
         originalQuote: quote,
         amountTo: quote.quote.amountOut,
+        quoteSource: 'NEARINTENTS'
       };
     } catch (error) {
       console.log(error);

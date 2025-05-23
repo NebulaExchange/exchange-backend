@@ -1,24 +1,34 @@
-import { Response } from 'express';
-import { QuoteRequest } from '../models/QuoteRequestModel';
+import {
+  Controller,
+  Post,
+  Route,
+  Tags,
+  Body,
+  SuccessResponse,
+  Response,
+  Example,
+} from 'tsoa';
+import { QuoteRequestModel } from '../models/QuoteRequestModel';
 import { cowswapService } from '../services/cowswapService';
 import { nearintentService } from '../services/nearIntentService';
+import { QuoteResponseModel } from '../models/QuoteResponseModel';
 
-// POST /api/quote
-export const getQuote = async (req: QuoteRequest, res: Response):  Promise<void> => 
-{
-  if (!req.data) {
-    res.status(500);
-    return;
+@Route("quote")
+@Tags("Quote")
+export class QuoteController extends Controller {
+  @Post()
+  @Response<QuoteResponseModel>("200", "Quote successfully retrieved")
+  @Response<{ error: string }>("404", "No quote found")
+  public async getQuote(
+    @Body() request: QuoteRequestModel
+  ): Promise<QuoteResponseModel | { error: string }> {
+    const cowQuote = await cowswapService.GetQuote(request);
+    const nearQuote = await nearintentService.GetQuote(request);
+
+    if (nearQuote) return nearQuote;
+    if (cowQuote) return cowQuote;
+
+    this.setStatus(404);
+    return { error: "No quote found" };
   }
-
-  const cowQuote = await cowswapService.GetQuote(req.data);
-  const nearQuote = await nearintentService.GetQuote(req.data);
-  res.status(200).json({
-    success: true,
-    message: "OK",
-    data: {
-      cowswapQuote: cowQuote,
-      nearIntentQuote: nearQuote,
-    },
-  });
-};
+}

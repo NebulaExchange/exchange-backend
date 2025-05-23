@@ -1,0 +1,510 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"Address": {
+				"type": "string",
+				"description": "20 byte Ethereum address encoded as a hex with `0x` prefix."
+			},
+			"TokenAmount": {
+				"type": "string",
+				"description": "Amount of a token. `uint256` encoded in decimal."
+			},
+			"AppDataHash": {
+				"type": "string",
+				"description": "32 bytes encoded as hex with `0x` prefix.\r\nIt's expected to be the hash of the stringified JSON object representing the `appData`."
+			},
+			"OrderKind": {
+				"description": "Is this order a buy or sell?",
+				"enum": [
+					"buy",
+					"sell"
+				],
+				"type": "string"
+			},
+			"SellTokenSource": {
+				"description": "Where should the `sellToken` be drawn from?",
+				"enum": [
+					"erc20",
+					"internal",
+					"external"
+				],
+				"type": "string"
+			},
+			"BuyTokenDestination": {
+				"description": "Where should the `buyToken` be transferred to?",
+				"enum": [
+					"erc20",
+					"internal"
+				],
+				"type": "string"
+			},
+			"SigningScheme": {
+				"description": "How was the order signed?",
+				"enum": [
+					"eip712",
+					"ethsign",
+					"presign",
+					"eip1271"
+				],
+				"type": "string"
+			},
+			"OrderParameters": {
+				"properties": {
+					"signingScheme": {
+						"$ref": "#/components/schemas/SigningScheme"
+					},
+					"buyTokenBalance": {
+						"$ref": "#/components/schemas/BuyTokenDestination"
+					},
+					"sellTokenBalance": {
+						"$ref": "#/components/schemas/SellTokenSource"
+					},
+					"partiallyFillable": {
+						"type": "boolean",
+						"description": "Is the order fill-or-kill or partially fillable?"
+					},
+					"kind": {
+						"$ref": "#/components/schemas/OrderKind",
+						"description": "The kind is either a buy or sell order."
+					},
+					"feeAmount": {
+						"$ref": "#/components/schemas/TokenAmount",
+						"description": "feeRatio * sellAmount + minimal_fee in atoms."
+					},
+					"appData": {
+						"$ref": "#/components/schemas/AppDataHash"
+					},
+					"validTo": {
+						"type": "number",
+						"format": "double",
+						"description": "Unix timestamp (`uint32`) until which the order is valid."
+					},
+					"buyAmount": {
+						"$ref": "#/components/schemas/TokenAmount",
+						"description": "Amount of `buyToken` to be bought in atoms."
+					},
+					"sellAmount": {
+						"$ref": "#/components/schemas/TokenAmount",
+						"description": "Amount of `sellToken` to be sold in atoms."
+					},
+					"receiver": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Address"
+							}
+						],
+						"nullable": true,
+						"description": "An optional Ethereum address to receive the proceeds of the trade instead of the owner (i.e. the order signer)."
+					},
+					"buyToken": {
+						"$ref": "#/components/schemas/Address",
+						"description": "ERC-20 token to be bought."
+					},
+					"sellToken": {
+						"$ref": "#/components/schemas/Address",
+						"description": "ERC-20 token to be sold."
+					}
+				},
+				"required": [
+					"partiallyFillable",
+					"kind",
+					"feeAmount",
+					"appData",
+					"validTo",
+					"buyAmount",
+					"sellAmount",
+					"buyToken",
+					"sellToken"
+				],
+				"type": "object",
+				"description": "Order parameters."
+			},
+			"CowswapQuote": {
+				"properties": {
+					"verified": {
+						"type": "boolean",
+						"description": "Whether it was possible to verify that the quoted amounts are accurate using a simulation."
+					},
+					"id": {
+						"type": "number",
+						"format": "double",
+						"description": "Quote ID linked to a quote to enable providing more metadata when analysing order slippage."
+					},
+					"expiration": {
+						"type": "string",
+						"description": "Expiration date of the offered fee. Order service might not accept\r\nthe fee after this expiration date. Encoded as ISO 8601 UTC."
+					},
+					"from": {
+						"$ref": "#/components/schemas/Address"
+					},
+					"quote": {
+						"$ref": "#/components/schemas/OrderParameters"
+					}
+				},
+				"required": [
+					"verified",
+					"expiration",
+					"quote"
+				],
+				"type": "object",
+				"description": "An order quoted by the backend that can be directly signed and\r\nsubmitted to the order creation backend."
+			},
+			"QuoteRequest.swapType": {
+				"description": "<p>Whether to use the amount as the output or the input for the basis of the swap:<ul>\n<li><code>EXACT_INPUT</code> - request output amount for exact input.</li>\n<li><code>EXACT_OUTPUT</code> - request output amount for exact output. The <code>refundTo</code> address will always receive excess tokens back even after the swap is complete.</li>\n</ul></p>",
+				"enum": [
+					"EXACT_INPUT",
+					"EXACT_OUTPUT"
+				],
+				"type": "string"
+			},
+			"QuoteRequest.depositType": {
+				"description": "<p>Type of the deposit address:<ul>\n<li><code>ORIGIN_CHAIN</code> - deposit address on the origin chain</li>\n<li><code>INTENTS</code> - <strong>account ID</strong> inside near intents to which you should transfer assets inside intents.</li>\n</ul></p>",
+				"enum": [
+					"ORIGIN_CHAIN",
+					"INTENTS"
+				],
+				"type": "string"
+			},
+			"QuoteRequest.refundType": {
+				"description": "<p>Type of refund address:<ul>\n<li><code>ORIGIN_CHAIN</code> - assets will be refunded to <code>refundTo</code> address on the origin chain</li>\n<li><code>INTENTS</code> - assets will be refunded to <code>refundTo</code> intents account</li>\n</ul></p>",
+				"enum": [
+					"ORIGIN_CHAIN",
+					"INTENTS"
+				],
+				"type": "string"
+			},
+			"QuoteRequest.recipientType": {
+				"description": "<p>Type of recipient address:<ul>\n<li><code>DESTINATION_CHAIN</code> - assets will be transferred to chain of <code>destinationAsset</code></li>\n<li><code>INTENTS</code> - assets will be transferred to account inside intents</li>\n</ul></p>",
+				"enum": [
+					"DESTINATION_CHAIN",
+					"INTENTS"
+				],
+				"type": "string"
+			},
+			"QuoteRequest": {
+				"properties": {
+					"quoteWaitingTimeMs": {
+						"type": "number",
+						"format": "double",
+						"description": "Time in milliseconds user is willing to wait for quote from relay."
+					},
+					"referral": {
+						"type": "string",
+						"description": "Referral identifier"
+					},
+					"deadline": {
+						"type": "string",
+						"description": "Timestamp in ISO format, that identifies when user refund will begin if the swap isn't completed by then."
+					},
+					"recipientType": {
+						"$ref": "#/components/schemas/QuoteRequest.recipientType",
+						"description": "<p>Type of recipient address:<ul>\n<li><code>DESTINATION_CHAIN</code> - assets will be transferred to chain of <code>destinationAsset</code></li>\n<li><code>INTENTS</code> - assets will be transferred to account inside intents</li>\n</ul></p>"
+					},
+					"recipient": {
+						"type": "string",
+						"description": "Recipient address. The format should match <code>recipientType</code>."
+					},
+					"refundType": {
+						"$ref": "#/components/schemas/QuoteRequest.refundType",
+						"description": "<p>Type of refund address:<ul>\n<li><code>ORIGIN_CHAIN</code> - assets will be refunded to <code>refundTo</code> address on the origin chain</li>\n<li><code>INTENTS</code> - assets will be refunded to <code>refundTo</code> intents account</li>\n</ul></p>"
+					},
+					"refundTo": {
+						"type": "string",
+						"description": "Address for user refund."
+					},
+					"amount": {
+						"type": "string",
+						"description": "Amount to swap as the base amount (can be switched to exact input/output using the dedicated flag), denoted in the smallest unit of the specified currency (e.g., wei for ETH)."
+					},
+					"destinationAsset": {
+						"type": "string",
+						"description": "ID of the destination asset."
+					},
+					"depositType": {
+						"$ref": "#/components/schemas/QuoteRequest.depositType",
+						"description": "<p>Type of the deposit address:<ul>\n<li><code>ORIGIN_CHAIN</code> - deposit address on the origin chain</li>\n<li><code>INTENTS</code> - <strong>account ID</strong> inside near intents to which you should transfer assets inside intents.</li>\n</ul></p>"
+					},
+					"originAsset": {
+						"type": "string",
+						"description": "ID of the origin asset."
+					},
+					"slippageTolerance": {
+						"type": "number",
+						"format": "double",
+						"description": "Slippage tolerance for the swap. This value is in basis points (1/100th of a percent), e.g. 100 for 1% slippage."
+					},
+					"swapType": {
+						"$ref": "#/components/schemas/QuoteRequest.swapType",
+						"description": "<p>Whether to use the amount as the output or the input for the basis of the swap:<ul>\n<li><code>EXACT_INPUT</code> - request output amount for exact input.</li>\n<li><code>EXACT_OUTPUT</code> - request output amount for exact output. The <code>refundTo</code> address will always receive excess tokens back even after the swap is complete.</li>\n</ul></p>"
+					},
+					"dry": {
+						"type": "boolean",
+						"description": "<p>Flag indicating whether this is a dry run request.</p>\n<p>If <code>true</code>, the response will <strong>NOT</strong> contain the following fields:<ul>\n<li><code>depositAddress</code></li>\n<li><code>timeWhenInactive</code></li>\n<li><code>timeEstimate</code></li>\n<li><code>deadline</code></li>\n</ul></p>"
+					}
+				},
+				"required": [
+					"deadline",
+					"recipientType",
+					"recipient",
+					"refundType",
+					"refundTo",
+					"amount",
+					"destinationAsset",
+					"depositType",
+					"originAsset",
+					"slippageTolerance",
+					"swapType",
+					"dry"
+				],
+				"type": "object"
+			},
+			"Quote": {
+				"properties": {
+					"timeEstimate": {
+						"type": "number",
+						"format": "double",
+						"description": "Estimated time in seconds for swap to be executed after the deposit transaction is confirmed"
+					},
+					"timeWhenInactive": {
+						"type": "string",
+						"description": "Time when the deposit address will become cold and swap processing will take more time"
+					},
+					"deadline": {
+						"type": "string",
+						"description": "Time when the deposit address will become inactive and funds might be lost"
+					},
+					"minAmountOut": {
+						"type": "string",
+						"description": "Minimum amount with slippage taken into account"
+					},
+					"amountOutUsd": {
+						"type": "string",
+						"description": "Amount of the destination asset equivalent in USD"
+					},
+					"amountOutFormatted": {
+						"type": "string",
+						"description": "Amount of the destination asset in readable format"
+					},
+					"amountOut": {
+						"type": "string",
+						"description": "Amount of the destination asset"
+					},
+					"minAmountIn": {
+						"type": "string",
+						"description": "Minimum amount of the origin asset that will be used for swap"
+					},
+					"amountInUsd": {
+						"type": "string",
+						"description": "Amount of the origin assets equivalent in USD"
+					},
+					"amountInFormatted": {
+						"type": "string",
+						"description": "Amount of the origin asset in readable format"
+					},
+					"amountIn": {
+						"type": "string",
+						"description": "Amount of the origin asset"
+					},
+					"depositAddress": {
+						"type": "string",
+						"description": "<p>The deposit address on the chain of <code>originAsset</code> in case if <code>depositType</code> is <code>ORIGIN_CHAIN</code>.</p>\n<p>The deposit address inside of near intents (the verifier smart contract) in case if <code>depositType</code> is <code>INTENTS</code>.</p>"
+					}
+				},
+				"required": [
+					"minAmountOut",
+					"amountOutUsd",
+					"amountOutFormatted",
+					"amountOut",
+					"minAmountIn",
+					"amountInUsd",
+					"amountInFormatted",
+					"amountIn"
+				],
+				"type": "object"
+			},
+			"NearIntentsQuote": {
+				"properties": {
+					"quote": {
+						"$ref": "#/components/schemas/Quote",
+						"description": "Response that contains the deposit address to send \"amount\" of <code>originAsset</code> and possible output amount."
+					},
+					"quoteRequest": {
+						"$ref": "#/components/schemas/QuoteRequest",
+						"description": "User request"
+					},
+					"signature": {
+						"type": "string",
+						"description": "Signature of the 1Click service confirming the quote for the specific deposit address. Must be saved on the client side (along with the whole quote) in order to resolve any disputes or mistakes."
+					},
+					"timestamp": {
+						"type": "string",
+						"description": "Timestamp in ISO format that took part in the deposit address derivation"
+					}
+				},
+				"required": [
+					"quote",
+					"quoteRequest",
+					"signature",
+					"timestamp"
+				],
+				"type": "object"
+			},
+			"QuoteResponseModel": {
+				"properties": {
+					"amountTo": {
+						"type": "string",
+						"example": "10000"
+					},
+					"originalQuote": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/CowswapQuote"
+							},
+							{
+								"$ref": "#/components/schemas/NearIntentsQuote"
+							}
+						]
+					},
+					"quoteSource": {
+						"type": "string",
+						"enum": [
+							"NEARINTENTS",
+							"COWSWAP"
+						],
+						"example": "COWSWAP"
+					}
+				},
+				"required": [
+					"amountTo",
+					"originalQuote",
+					"quoteSource"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"QuoteRequestModel": {
+				"properties": {
+					"amountFrom": {
+						"type": "string"
+					},
+					"accountFrom": {
+						"type": "string"
+					},
+					"tokenFrom": {
+						"type": "string"
+					},
+					"chainFrom": {
+						"type": "string"
+					},
+					"accountTo": {
+						"type": "string"
+					},
+					"tokenTo": {
+						"type": "string"
+					},
+					"chainTo": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"amountFrom",
+					"accountFrom",
+					"tokenFrom",
+					"tokenTo"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "nebula-api",
+		"version": "1.0.0",
+		"description": "Nebula API",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {
+			"name": "Nebula"
+		}
+	},
+	"paths": {
+		"/quote": {
+			"post": {
+				"operationId": "GetQuote",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/QuoteResponseModel"
+										},
+										{
+											"properties": {
+												"error": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"error"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "No quote found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"error": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"error"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Quote"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/QuoteRequestModel"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
