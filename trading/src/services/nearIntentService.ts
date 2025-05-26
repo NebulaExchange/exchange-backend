@@ -24,7 +24,7 @@ class NearIntentService {
       if (!originAsset || !destinationAsset) return null;
 
       const quoteRequest: QuoteRequest = {
-        dry: true,
+        dry: false,
         deadline: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
         swapType: QuoteRequest.swapType.EXACT_INPUT,
         slippageTolerance: 100, // 1%
@@ -93,7 +93,7 @@ class NearIntentService {
     if (mappedToken) return mappedToken;
 
     var nep141Chain = blockchain === "near" ? "" : blockchain + "-";
-    return `nep141:${nep141Chain}${contractAddress}.omft.near`;
+    return `nep141:${nep141Chain}${contractAddress}.omft.near`.toLowerCase();
   }
 
   mapFromNearAsset(t: { assetId: string; blockchain: string }): string {
