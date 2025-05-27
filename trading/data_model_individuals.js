@@ -1,4 +1,6 @@
 
+//COWSWAP
+
 type QuoteRequest = {
       sellToken: Address;
       buyToken: Address;
@@ -31,3 +33,29 @@ type OrderRequest = {
     quoteId?: string;
     expiration: string;
 }
+
+
+//NEAR INTENTS
+
+type QuoteRequest = {
+    swapType: (EXACT_INPUT or EXACT_OUTPUT)
+    slippageTolerance: number;
+    originAsset: string;
+    destinationAsset: string;
+    amount: string;
+    deadline: string;
+    quoteWaitingTimeMs?: number;
+}
+
+type QuoteResponse = {
+    depositAddress?: string;
+    amountIn: string;
+    minAmountIn: string;
+    amountOut: string;
+    minAmountOut: string;
+    deadline?: string;
+    timeEstimate?: number;
+}
+
+// ONEINCH
+
