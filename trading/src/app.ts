@@ -13,7 +13,34 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 // tsoa API routes
-RegisterRoutes(app); // <-- Register tsoa routes here
+RegisterRoutes(app); 
+
+import { ValidateError } from 'tsoa';
+import { Request, Response, NextFunction } from 'express';
+
+// TSOA-required error handler
+app.use(function errorHandler(
+  err: unknown,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response | void {
+  if (err instanceof ValidateError) {
+    console.warn(`Validation failed:`, err.fields);
+    return res.status(422).json({
+      message: 'Validation Failed',
+      details: err?.fields,
+    });
+  }
+  if (err instanceof Error) {
+    console.error(err);
+    return res.status(500).json({
+      message: 'Internal Server Error',
+    });
+  }
+
+  next();
+});
 
 // Serve tsoa-generated Swagger JSON
 app.get('/swagger.json', (_req, res) => {
