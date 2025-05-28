@@ -79,4 +79,32 @@ type Path = {
   to: Address;
 } 
 
-// COMMON MODEL 
+// COMMON QUOTE MODEL 
+
+type QuoteRequestModel = {
+  amountFrom: number; 
+  accountFrom: string;
+  tokenFrom: Address;
+  chainFrom?: string;
+  accountTo?: Address;
+  tokenTo: string;
+  chainTo?: string;
+  slippage?: number;
+}
+
+type QuoteResponseModel = {
+amountTo: string;
+amountFrom: string;
+originalQuote: any;
+sourceSystem: string;
+tokenFrom: Address;
+tokenTo:Address;
+}
+
+
+
+
+
+
+
+
