@@ -59,3 +59,24 @@ type QuoteResponse = {
 
 // ONEINCH
 
+type QuoteRequest = {
+  src: Address;
+  dst: Address;
+  amount:  number;
+  slippage: number;
+}
+type QuoteResponse = {
+  src: Address;
+  dst: Address;
+  dstAmount:  number;
+  paths: Path[];
+  callData: CallData;
+}
+type Path = {
+  name: string;
+  part: number;
+  from: Address;
+  to: Address;
+} 
+
+// COMMON MODEL 
