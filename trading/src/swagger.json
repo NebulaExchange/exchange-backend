@@ -375,7 +375,8 @@
 						"type": "string",
 						"enum": [
 							"NEARINTENTS",
-							"COWSWAP"
+							"COWSWAP",
+							"1INCH"
 						],
 						"example": "COWSWAP"
 					}
@@ -388,9 +389,16 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"QuoteKind": {
+				"type": "string",
+				"enum": [
+					"EXACT_INPUT",
+					"EXACT_OUTPUT"
+				]
+			},
 			"QuoteRequestModel": {
 				"properties": {
-					"amountFrom": {
+					"amount": {
 						"type": "string"
 					},
 					"accountFrom": {
@@ -410,13 +418,39 @@
 					},
 					"chainTo": {
 						"type": "string"
+					},
+					"slippage": {
+						"type": "number",
+						"format": "double"
+					},
+					"kind": {
+						"$ref": "#/components/schemas/QuoteKind"
+					},
+					"ttl": {
+						"type": "number",
+						"format": "double"
+					},
+					"appData": {
+						"type": "string"
+					},
+					"isSmartContractWallet": {
+						"type": "boolean"
+					},
+					"isNative": {
+						"type": "boolean"
 					}
 				},
 				"required": [
-					"amountFrom",
+					"amount",
 					"accountFrom",
 					"tokenFrom",
-					"tokenTo"
+					"chainFrom",
+					"tokenTo",
+					"chainTo",
+					"slippage",
+					"kind",
+					"ttl",
+					"appData"
 				],
 				"type": "object",
 				"additionalProperties": false

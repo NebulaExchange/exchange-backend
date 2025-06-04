@@ -1,4 +1,4 @@
-import { OrderBookApi, OrderQuoteSideKindSell, SupportedChainId } from '@cowprotocol/cow-sdk'
+import { BuyTokenDestination, OrderBookApi, OrderQuoteSideKindBuy, OrderQuoteSideKindSell, PriceQuality, SellTokenSource, SigningScheme, SupportedChainId } from '@cowprotocol/cow-sdk'
 import { QuoteRequestModel } from '../models/QuoteRequestModel'
 import { QuoteResponseModel } from '../models/QuoteResponseModel'
 import { TokenModel } from '../models/TokenModel';
@@ -6,24 +6,56 @@ import CowswapTokens from '../data/cowswapTokens';
 import { CowswapOrder } from '../models/OrderRequestModel'
 import { OrderResponseModel } from '../models/OrderResponseModel'
 
+export const ETH_FLOW_QUOTE_PARAMS = {
+  signingScheme: SigningScheme.EIP1271,
+  onchainOrder: true,
+  verificationGasLimit: 0,
+} as const;
+
 class CowswapService {
   async GetQuote(
     request: QuoteRequestModel
   ): Promise<QuoteResponseModel | null> {
     try {
       const orderBookApi = new OrderBookApi({
-        chainId: SupportedChainId.MAINNET,
+        chainId: this.mapChainKeyToId(request.chainFrom),
       });
-
-      const quote = await orderBookApi.getQuote({
-        sellToken: request.tokenFrom,
-        buyToken: request.tokenTo,
-        from: request.accountFrom,
-        receiver: request.accountTo ?? request.accountFrom,
-        sellAmountBeforeFee: request.amountFrom,
-        kind: OrderQuoteSideKindSell.SELL,
-        
-      });
+     
+      const quote = await orderBookApi.getQuote(
+        request.kind === "EXACT_INPUT"
+          ? {
+              sellToken: this.isNative(request.tokenFrom) ? this.getWrappedNativeToken(this.mapChainKeyToId(request.chainFrom)) : request.tokenFrom,
+              buyToken: this.isNative(request.tokenTo) ? this.getWrappedNativeToken(this.mapChainKeyToId(request.chainFrom)) : request.tokenTo,
+              from: request.accountFrom,
+              receiver: request.accountTo ?? request.accountFrom,
+              sellAmountBeforeFee: request.amount,
+              kind: OrderQuoteSideKindSell.SELL,
+              validFor: request.ttl,
+              appData: request.appData,
+              priceQuality: PriceQuality.VERIFIED,
+              buyTokenBalance: BuyTokenDestination.ERC20,
+              sellTokenBalance: SellTokenSource.ERC20,
+              onchainOrder: false,
+              signingScheme: request.isSmartContractWallet ? SigningScheme.PRESIGN : SigningScheme.EIP712,
+              ...(request.isNative === true ? ETH_FLOW_QUOTE_PARAMS : {}),
+            }
+          : {
+              sellToken: this.isNative(request.tokenFrom) ? this.getWrappedNativeToken(this.mapChainKeyToId(request.chainFrom)) : request.tokenFrom,
+              buyToken: this.isNative(request.tokenTo) ? this.getWrappedNativeToken(this.mapChainKeyToId(request.chainFrom)) : request.tokenTo,
+              from: request.accountFrom,
+              receiver: request.accountTo ?? request.accountFrom,
+              buyAmountAfterFee: request.amount,
+              kind: OrderQuoteSideKindBuy.BUY,
+              validFor: request.ttl,
+              appData: request.appData,
+              priceQuality: PriceQuality.VERIFIED,
+              buyTokenBalance: BuyTokenDestination.ERC20,
+              sellTokenBalance: SellTokenSource.ERC20,
+              onchainOrder: false,
+              signingScheme: request.isSmartContractWallet ? SigningScheme.PRESIGN : SigningScheme.EIP712,
+              ...(request.isNative === true ? ETH_FLOW_QUOTE_PARAMS : {}),
+            }
+      );
 
       return {
         originalQuote: quote,
@@ -56,15 +88,34 @@ class CowswapService {
     }
   }
 
-  mapChainIdToKey(chain: number): string {
+  isNative(token: string): boolean {
+    return token.toLowerCase() === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+  }
+
+  getWrappedNativeToken(chain: number): string {
     switch (chain) {
-      case 1:
+      case SupportedChainId.MAINNET:
+        return "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".toLowerCase();
+      case SupportedChainId.GNOSIS_CHAIN:
+        return "0x6a023ccd1ff6f2045c3309768ead9e68f978f6e1".toLowerCase();
+      case SupportedChainId.BASE:
+        return "0x4200000000000000000000000000000000000006".toLowerCase();
+      case SupportedChainId.ARBITRUM_ONE:
+        return "0x82af49447d8a07e3bd95bd0d56f35241523fbab1".toLowerCase();
+      default:
+        return "";
+    }
+  }
+
+   mapChainIdToKey(chain: number): string {
+    switch (chain) {
+      case SupportedChainId.MAINNET:
         return "eth";
-      case 100:
+      case SupportedChainId.GNOSIS_CHAIN:
         return "gnosis";
-      case 8453:
+      case SupportedChainId.BASE:
         return "base";
-      case 42161:
+      case SupportedChainId.ARBITRUM_ONE:
         return "arb";
       default:
         return "";
@@ -74,13 +125,13 @@ class CowswapService {
   mapChainKeyToId(chain: string): number {
     switch (chain) {
       case "eth":
-        return 1;
+        return SupportedChainId.MAINNET;
       case "gnosis":
-        return 100;
+        return SupportedChainId.GNOSIS_CHAIN;
       case "base":
-        return 8453;
+        return SupportedChainId.BASE;
       case "arb":
-        return 42161;
+        return SupportedChainId.ARBITRUM_ONE;
       default:
         return 0;
     }

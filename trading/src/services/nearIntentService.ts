@@ -25,13 +25,16 @@ class NearIntentService {
 
       const quoteRequest: QuoteRequest = {
         dry: false,
-        deadline: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-        swapType: QuoteRequest.swapType.EXACT_INPUT,
-        slippageTolerance: 100, // 1%
+        deadline: new Date(Date.now() + request.ttl * 1000).toISOString(),
+        swapType:
+          request.kind === "EXACT_INPUT"
+            ? QuoteRequest.swapType.EXACT_INPUT
+            : QuoteRequest.swapType.EXACT_OUTPUT,
+        slippageTolerance: request.slippage * 100,
         originAsset: originAsset,
         depositType: QuoteRequest.depositType.ORIGIN_CHAIN,
         destinationAsset: destinationAsset,
-        amount: request.amountFrom,
+        amount: request.amount,
         refundTo: request.accountFrom,
         refundType: QuoteRequest.refundType.ORIGIN_CHAIN,
         recipient: request.accountTo ?? request.accountFrom,
@@ -40,6 +43,9 @@ class NearIntentService {
 
       // Get quote
       const quote = await OneClickService.getQuote(quoteRequest);
+      quote.quoteRequest.originAsset = this.mapFromNearAsset({assetId:quote.quoteRequest.originAsset, blockchain: request.chainFrom});
+      quote.quoteRequest.destinationAsset = this.mapFromNearAsset({assetId:quote.quoteRequest.destinationAsset, blockchain: request.chainTo});
+
       return {
         originalQuote: quote,
         amountTo: quote.quote.amountOut,
@@ -89,11 +95,11 @@ class NearIntentService {
   }
 
   mapToNearAsset(blockchain: string, contractAddress: string): string {
-    const mappedToken = tokenMap[blockchain]?.[contractAddress] || null;
+    const mappedToken = tokenMap[blockchain]?.[contractAddress.toLowerCase()] || null;
     if (mappedToken) return mappedToken;
 
     var nep141Chain = blockchain === "near" ? "" : blockchain + "-";
-    return `nep141:${nep141Chain}${contractAddress}.omft.near`.toLowerCase();
+    return `nep141:${nep141Chain}${contractAddress.toLowerCase()}.omft.near`.toLowerCase();
   }
 
   mapFromNearAsset(t: { assetId: string; blockchain: string }): string {

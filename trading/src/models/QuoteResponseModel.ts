@@ -9,5 +9,5 @@ export class QuoteResponseModel {
   public originalQuote!: CowswapQuote | NearIntentsQuote;
 
   @Example("COWSWAP")
-  public quoteSource!: "NEARINTENTS" | "COWSWAP";
+  public quoteSource!: "NEARINTENTS" | "COWSWAP" | "1INCH";
 }

@@ -97,21 +97,32 @@ const models: TsoaRoute.Models = {
         "properties": {
             "amountTo": {"dataType":"string","required":true},
             "originalQuote": {"dataType":"union","subSchemas":[{"ref":"CowswapQuote"},{"ref":"NearIntentsQuote"}],"required":true},
-            "quoteSource": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["NEARINTENTS"]},{"dataType":"enum","enums":["COWSWAP"]}],"required":true},
+            "quoteSource": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["NEARINTENTS"]},{"dataType":"enum","enums":["COWSWAP"]},{"dataType":"enum","enums":["1INCH"]}],"required":true},
         },
         "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "QuoteKind": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["EXACT_INPUT"]},{"dataType":"enum","enums":["EXACT_OUTPUT"]}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "QuoteRequestModel": {
         "dataType": "refObject",
         "properties": {
-            "amountFrom": {"dataType":"string","required":true},
+            "amount": {"dataType":"string","required":true},
             "accountFrom": {"dataType":"string","required":true},
             "tokenFrom": {"dataType":"string","required":true},
-            "chainFrom": {"dataType":"string"},
+            "chainFrom": {"dataType":"string","required":true},
             "accountTo": {"dataType":"string"},
             "tokenTo": {"dataType":"string","required":true},
-            "chainTo": {"dataType":"string"},
+            "chainTo": {"dataType":"string","required":true},
+            "slippage": {"dataType":"double","required":true},
+            "kind": {"ref":"QuoteKind","required":true},
+            "ttl": {"dataType":"double","required":true},
+            "appData": {"dataType":"string","required":true},
+            "isSmartContractWallet": {"dataType":"boolean"},
+            "isNative": {"dataType":"boolean"},
         },
         "additionalProperties": false,
     },

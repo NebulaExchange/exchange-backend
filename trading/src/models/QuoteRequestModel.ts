@@ -1,9 +1,17 @@
 export interface QuoteRequestModel {
-  amountFrom: string;
+  amount: string;
   accountFrom: string;
   tokenFrom: string;
-  chainFrom?: string;
+  chainFrom: string;
   accountTo?: string;
   tokenTo: string;
-  chainTo?: string;
+  chainTo: string;
+  slippage: number; //used in NEAR Intents
+  kind: QuoteKind;
+  ttl: number;
+  appData: string;
+  isSmartContractWallet?: boolean; //backwards compatibility with sky.money
+  isNative?: boolean; //backwards compatibility with sky.money
 }
+
+export type QuoteKind = "EXACT_INPUT" | "EXACT_OUTPUT";
