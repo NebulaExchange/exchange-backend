@@ -1,4 +1,7 @@
-name: nebula-exchange-api-prod
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy Node.js app to Azure Web App - nebula-exchange-api-prod
 
 on:
   push:
@@ -57,9 +60,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5547DDCD7ABA41CAA3D90C3D283E31D1 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C268B18676274664B73A6ADAD120CE82 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A956F4E69DCC4E89B48544E2328BAEB5 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_8FEF0EFD8E4F47FD87CB34DBC859D558 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C995AF3A18394F7D87C67A39FFC34103 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D51E5218A1C64DDCA4095BE0BFDCA557 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
