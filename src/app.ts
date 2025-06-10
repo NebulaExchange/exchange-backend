@@ -5,12 +5,10 @@ import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
 import { ValidateError } from 'tsoa';
 import { setupApplicationInsights } from './config/appInsights';
-
-const appInsightsClient = setupApplicationInsights();
-
 import { Request, Response, NextFunction } from 'express';
 import { RegisterRoutes } from './routes'; 
 
+const appInsightsClient = setupApplicationInsights();
 const app: Application = express();
 
 // Middleware
