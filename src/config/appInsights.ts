@@ -6,6 +6,6 @@ export function setupApplicationInsights() {
     azureMonitorExporterOptions: {
       connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
       credential: new DefaultAzureCredential()
-    },
+    }
   });
 }
