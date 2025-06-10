@@ -7,6 +7,40 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"TokenModel": {
+				"properties": {
+					"address": {
+						"type": "string"
+					},
+					"symbol": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"decimals": {
+						"type": "number",
+						"format": "double"
+					},
+					"chain": {
+						"type": "string"
+					},
+					"logoURI": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"address",
+					"symbol",
+					"name",
+					"decimals",
+					"chain",
+					"logoURI"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Address": {
 				"type": "string",
 				"description": "20 byte Ethereum address encoded as a hex with `0x` prefix."
@@ -449,8 +483,7 @@
 					"chainTo",
 					"slippage",
 					"kind",
-					"ttl",
-					"appData"
+					"ttl"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -470,6 +503,31 @@
 		}
 	},
 	"paths": {
+		"/tokens": {
+			"get": {
+				"operationId": "GetTokens",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/TokenModel"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tokens"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/quote": {
 			"post": {
 				"operationId": "GetQuote",

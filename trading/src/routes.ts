@@ -4,6 +4,8 @@
 import type { TsoaRoute } from '@tsoa/runtime';
 import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { TokenController } from './controllers/tokenController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { QuoteController } from './controllers/quoteController';
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
 
@@ -12,6 +14,19 @@ import type { Request as ExRequest, Response as ExResponse, RequestHandler, Rout
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+    "TokenModel": {
+        "dataType": "refObject",
+        "properties": {
+            "address": {"dataType":"string","required":true},
+            "symbol": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "decimals": {"dataType":"double","required":true},
+            "chain": {"dataType":"string","required":true},
+            "logoURI": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Address": {
         "dataType": "refAlias",
         "type": {"dataType":"string","validators":{}},
@@ -120,7 +135,7 @@ const models: TsoaRoute.Models = {
             "slippage": {"dataType":"double","required":true},
             "kind": {"ref":"QuoteKind","required":true},
             "ttl": {"dataType":"double","required":true},
-            "appData": {"dataType":"string","required":true},
+            "appData": {"dataType":"string"},
             "isSmartContractWallet": {"dataType":"boolean"},
             "isNative": {"dataType":"boolean"},
         },
@@ -144,6 +159,35 @@ export function RegisterRoutes(app: Router) {
 
 
     
+        const argsTokenController_getTokens: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/tokens',
+            ...(fetchMiddlewares<RequestHandler>(TokenController)),
+            ...(fetchMiddlewares<RequestHandler>(TokenController.prototype.getTokens)),
+
+            async function TokenController_getTokens(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTokenController_getTokens, request, response });
+
+                const controller = new TokenController();
+
+              await templateService.apiHandler({
+                methodName: 'getTokens',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsQuoteController_getQuote: Record<string, TsoaRoute.ParameterSchema> = {
                 request: {"in":"body","name":"request","required":true,"ref":"QuoteRequestModel"},
         };

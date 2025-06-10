@@ -5,6 +5,7 @@ import { TokenModel } from '../models/TokenModel';
 import NearIntentTokens from '../data/nearIntentTokens';
 import { NearIntentsOrder } from '../models/OrderRequestModel';
 import { OrderResponseModel } from '../models/OrderResponseModel';
+import { auditService } from '../services/auditService';
 
 class NearIntentService {
   async GetQuote(
@@ -43,18 +44,27 @@ class NearIntentService {
 
       // Get quote
       const quote = await OneClickService.getQuote(quoteRequest);
-      quote.quoteRequest.originAsset = this.mapFromNearAsset({assetId:quote.quoteRequest.originAsset, blockchain: request.chainFrom});
-      quote.quoteRequest.destinationAsset = this.mapFromNearAsset({assetId:quote.quoteRequest.destinationAsset, blockchain: request.chainTo});
+      quote.quoteRequest.originAsset = this.mapFromNearAsset({
+        assetId: quote.quoteRequest.originAsset,
+        blockchain: request.chainFrom,
+      });
+      quote.quoteRequest.destinationAsset = this.mapFromNearAsset({
+        assetId: quote.quoteRequest.destinationAsset,
+        blockchain: request.chainTo,
+      });
 
-      return {
+      const response: QuoteResponseModel = {
         originalQuote: quote,
         amountTo: quote.quote.amountOut,
-        quoteSource: 'NEARINTENTS'
+        quoteSource: "NEARINTENTS",
       };
-    } catch (error) {
-      console.log(error);
+
+      await auditService.LogQuote(request, response);
+      return response;
+    } catch (error: any) {
+      const errorMessage = error?.message ?? String(error);
+      await auditService.LogQuoteFailure(request, "NEARINTENTS", errorMessage);
       return null;
-      //throw new Error("Failed to fetch orders from NEAR Intents API");
     }
   }
 
@@ -64,7 +74,7 @@ class NearIntentService {
     try {
       await OneClickService.submitDepositTx(request);
       return {
-        orderType: 'nearIntent',
+        orderType: "nearIntent",
         // although there is txHash, near intents api use depositAddress to check order status
         orderId: request.depositAddress,
       };
@@ -95,7 +105,8 @@ class NearIntentService {
   }
 
   mapToNearAsset(blockchain: string, contractAddress: string): string {
-    const mappedToken = tokenMap[blockchain]?.[contractAddress.toLowerCase()] || null;
+    const mappedToken =
+      tokenMap[blockchain]?.[contractAddress.toLowerCase()] || null;
     if (mappedToken) return mappedToken;
 
     var nep141Chain = blockchain === "near" ? "" : blockchain + "-";

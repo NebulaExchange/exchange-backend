@@ -9,7 +9,7 @@ export interface QuoteRequestModel {
   slippage: number; //used in NEAR Intents
   kind: QuoteKind;
   ttl: number;
-  appData: string;
+  appData?: string;
   isSmartContractWallet?: boolean; //backwards compatibility with sky.money
   isNative?: boolean; //backwards compatibility with sky.money
 }

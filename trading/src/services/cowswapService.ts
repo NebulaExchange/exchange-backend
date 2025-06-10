@@ -1,10 +1,11 @@
-import { BuyTokenDestination, OrderBookApi, OrderQuoteSideKindBuy, OrderQuoteSideKindSell, PriceQuality, SellTokenSource, SigningScheme, SupportedChainId } from '@cowprotocol/cow-sdk'
+import { BuyTokenDestination, OrderBookApi, OrderQuoteSideKindBuy, OrderQuoteSideKindSell, PriceQuality, SellTokenSource, SigningScheme, SupportedChainId,CowError } from '@cowprotocol/cow-sdk'
 import { QuoteRequestModel } from '../models/QuoteRequestModel'
 import { QuoteResponseModel } from '../models/QuoteResponseModel'
 import { TokenModel } from '../models/TokenModel';
 import CowswapTokens from '../data/cowswapTokens';
 import { CowswapOrder } from '../models/OrderRequestModel'
 import { OrderResponseModel } from '../models/OrderResponseModel'
+import { auditService } from '../services/auditService';
 
 export const ETH_FLOW_QUOTE_PARAMS = {
   signingScheme: SigningScheme.EIP1271,
@@ -20,12 +21,20 @@ class CowswapService {
       const orderBookApi = new OrderBookApi({
         chainId: this.mapChainKeyToId(request.chainFrom),
       });
-     
+
       const quote = await orderBookApi.getQuote(
         request.kind === "EXACT_INPUT"
           ? {
-              sellToken: this.isNative(request.tokenFrom) ? this.getWrappedNativeToken(this.mapChainKeyToId(request.chainFrom)) : request.tokenFrom,
-              buyToken: this.isNative(request.tokenTo) ? this.getWrappedNativeToken(this.mapChainKeyToId(request.chainFrom)) : request.tokenTo,
+              sellToken: this.isNative(request.tokenFrom)
+                ? this.getWrappedNativeToken(
+                    this.mapChainKeyToId(request.chainFrom)
+                  )
+                : request.tokenFrom,
+              buyToken: this.isNative(request.tokenTo)
+                ? this.getWrappedNativeToken(
+                    this.mapChainKeyToId(request.chainFrom)
+                  )
+                : request.tokenTo,
               from: request.accountFrom,
               receiver: request.accountTo ?? request.accountFrom,
               sellAmountBeforeFee: request.amount,
@@ -36,12 +45,22 @@ class CowswapService {
               buyTokenBalance: BuyTokenDestination.ERC20,
               sellTokenBalance: SellTokenSource.ERC20,
               onchainOrder: false,
-              signingScheme: request.isSmartContractWallet ? SigningScheme.PRESIGN : SigningScheme.EIP712,
+              signingScheme: request.isSmartContractWallet
+                ? SigningScheme.PRESIGN
+                : SigningScheme.EIP712,
               ...(request.isNative === true ? ETH_FLOW_QUOTE_PARAMS : {}),
             }
           : {
-              sellToken: this.isNative(request.tokenFrom) ? this.getWrappedNativeToken(this.mapChainKeyToId(request.chainFrom)) : request.tokenFrom,
-              buyToken: this.isNative(request.tokenTo) ? this.getWrappedNativeToken(this.mapChainKeyToId(request.chainFrom)) : request.tokenTo,
+              sellToken: this.isNative(request.tokenFrom)
+                ? this.getWrappedNativeToken(
+                    this.mapChainKeyToId(request.chainFrom)
+                  )
+                : request.tokenFrom,
+              buyToken: this.isNative(request.tokenTo)
+                ? this.getWrappedNativeToken(
+                    this.mapChainKeyToId(request.chainFrom)
+                  )
+                : request.tokenTo,
               from: request.accountFrom,
               receiver: request.accountTo ?? request.accountFrom,
               buyAmountAfterFee: request.amount,
@@ -52,19 +71,25 @@ class CowswapService {
               buyTokenBalance: BuyTokenDestination.ERC20,
               sellTokenBalance: SellTokenSource.ERC20,
               onchainOrder: false,
-              signingScheme: request.isSmartContractWallet ? SigningScheme.PRESIGN : SigningScheme.EIP712,
+              signingScheme: request.isSmartContractWallet
+                ? SigningScheme.PRESIGN
+                : SigningScheme.EIP712,
               ...(request.isNative === true ? ETH_FLOW_QUOTE_PARAMS : {}),
             }
       );
 
-      return {
+      const response: QuoteResponseModel = {
         originalQuote: quote,
         amountTo: quote.quote.buyAmount,
-        quoteSource: 'COWSWAP'
+        quoteSource: "COWSWAP",
       };
-    } catch (error) {
+
+      await auditService.LogQuote(request, response);
+      return response;
+    } catch (error: any) {
+      const errorMessage = error?.body?.errorType ?? error?.message ?? String(error);
+      await auditService.LogQuoteFailure(request, "COWSWAP", errorMessage);
       return null;
-      //throw new Error('Failed to fetch orders from CoW Protocol API');
     }
   }
 
@@ -107,7 +132,7 @@ class CowswapService {
     }
   }
 
-   mapChainIdToKey(chain: number): string {
+  mapChainIdToKey(chain: number): string {
     switch (chain) {
       case SupportedChainId.MAINNET:
         return "eth";
@@ -137,21 +162,19 @@ class CowswapService {
     }
   }
 
-  async CreateOrder(
-    request: CowswapOrder
-  ): Promise<OrderResponseModel | null> {
+  async CreateOrder(request: CowswapOrder): Promise<OrderResponseModel | null> {
     try {
       const orderBookApi = new OrderBookApi({
         chainId: SupportedChainId.MAINNET,
       });
-      
+
       const orderId = await orderBookApi.sendOrder(request);
       return {
-        orderType: 'cowswap',
-        orderId
+        orderType: "cowswap",
+        orderId,
       };
     } catch (error) {
-      console.error('Error creating order:', error);
+      console.error("Error creating order:", error);
       return null;
     }
   }
