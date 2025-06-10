@@ -69,3 +69,4 @@ jobs:
           app-name: 'nebula-exchange-api-prod'
           slot-name: 'Production'
           package: .
+          app-settings: 'SCM_DO_BUILD_DURING_DEPLOYMENT=true'
