@@ -1,7 +1,7 @@
 import request from 'supertest';
-import app from '../src/app';
-import { QuoteRequestModel } from "../src/models/QuoteRequestModel"; 
-import { TokenModel } from '../src/models/TokenModel';
+import {app} from '../app';
+import { QuoteRequestModel } from "../models/QuoteRequestModel"; 
+import { TokenModel } from '../models/TokenModel';
 
 describe('Quote API Integration Test', () => {
   let tokens: TokenModel[];
