@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -21,21 +21,18 @@ jobs:
           node-version: '22.x'
 
       - name: npm install, build, and test
-        working-directory: ./trading
         run: |
           npm install
           npm run build --if-present
           npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: |
-          cd trading
-          zip -r ../release.zip . 
+        run: zip -r release.zip . -x "node_modules/*"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
+          name: node-app-prod
           path: release.zip
 
   deploy:
@@ -45,24 +42,25 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: node-app
+          name: node-app-prod
+          path: .
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: unzip release.zip -d .
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C881AE68912D4C8AB3BF6EB9BB318CF5 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4F35B6EFFBD84A67901F04380A77C27B }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_852E46337FA249CBA8B2B4C5C1929720 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_23851C5B6CB546769F38BEA3183A6C78 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1E2F0F73748C4F4499929699AB28445A }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_42B907AF82C64ACEBD95AE7C24250249 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -71,4 +69,3 @@ jobs:
           app-name: 'nebula-exchange-api-prod'
           slot-name: 'Production'
           package: .
-          
