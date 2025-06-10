@@ -11,7 +11,7 @@ class AuditService {
   ): Promise<void> {
     const credential = new DefaultAzureCredential();
     const tableClient = new TableClient(
-      "https://nebulastorageprod.table.core.windows.net",
+      `https://${process.env.STORAGE_ACCOUNT}.table.core.windows.net`,
       "quotes",
       credential
     );
@@ -31,7 +31,7 @@ class AuditService {
   async LogQuoteFailure(request: QuoteRequestModel, source: string, error: string): Promise<void> {
     const credential = new DefaultAzureCredential();
     const tableClient = new TableClient(
-      "https://nebulastorageprod.table.core.windows.net",
+      `https://${process.env.STORAGE_ACCOUNT}.table.core.windows.net`,
       "quotes",
       credential
     );
