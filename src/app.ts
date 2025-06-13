@@ -4,11 +4,11 @@ import path from 'path';
 import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
 import { ValidateError } from 'tsoa';
-import { setupApplicationInsights } from './config/appInsights';
 import { Request, Response, NextFunction } from 'express';
 import { RegisterRoutes } from './routes'; 
+import { setupAppInsights } from './config/appInsights';
+const telemetryClient = setupAppInsights();
 
-const appInsightsClient = setupApplicationInsights();
 const app: Application = express();
 
 // Middleware
@@ -58,4 +58,4 @@ app.get('/swagger.json', (_req, res) => {
 const swaggerDocument = require('./swagger.json');
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-export { app, appInsightsClient };
+export { app, telemetryClient };

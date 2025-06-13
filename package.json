@@ -13,11 +13,9 @@
   "author": "Nebula",
   "license": "ISC",
   "dependencies": {
-    "@azure/data-tables": "^13.3.1",
-    "@azure/identity": "^4.10.0",
-    "@azure/monitor-opentelemetry": "^1.11.0",
     "@cowprotocol/cow-sdk": "^5.10.3",
     "@defuse-protocol/one-click-sdk-typescript": "^0.1.1",
+    "applicationinsights": "^3.7.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",

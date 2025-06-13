@@ -1,11 +1,18 @@
-import { useAzureMonitor } from '@azure/monitor-opentelemetry';
-import { DefaultAzureCredential } from '@azure/identity';
+import * as appInsights from 'applicationinsights';
 
-export function setupApplicationInsights() {
-  useAzureMonitor({
-    azureMonitorExporterOptions: {
-      connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
-      credential: new DefaultAzureCredential()
-    }
-  });
+export function setupAppInsights() {
+  appInsights
+    .setup(process.env.APPINSIGHTS_INSTRUMENTATIONKEY)
+    .setAutoCollectConsole(true)
+    .setAutoCollectExceptions(true)
+    .setAutoCollectRequests(true)
+    .setAutoCollectDependencies(true)
+    .setUseDiskRetryCaching(true)
+    .start();
+
+  return appInsights.defaultClient;
+}
+
+export function getAppInsightsClient(): appInsights.TelemetryClient  {
+    return appInsights.defaultClient;
 }
