@@ -2,7 +2,6 @@ import { QuoteResponseModel } from "../models/QuoteResponseModel";
 import { QuoteRequestModel } from "../models/QuoteRequestModel";
 import { getAppInsightsClient } from '../config/appInsights';
 import { tokenService } from "./tokenService";
-import { request } from "http";
 
 class AuditService {
   async LogQuoteRequest(
@@ -17,11 +16,11 @@ class AuditService {
       properties: {
         requestId: request.requestId!,
         tokenFrom: request.tokenFrom,
-        tokenFromName: tokenFrom?.name,
-        tokenFromDecimals: tokenFrom?.decimals,
+        tokenFromName: tokenFrom?.name ?? "",
+        tokenFromDecimals: tokenFrom?.decimals ?? 1,
         tokenTo: request.tokenTo,
-        tokenToName: tokenTo?.name,
-        tokenToDecimals: tokenTo?.decimals,
+        tokenToName: tokenTo?.name ?? "",
+        tokenToDecimals: tokenTo?.decimals ?? 1,
         amountFrom: request.amount,
         timestamp: new Date(),
       },
