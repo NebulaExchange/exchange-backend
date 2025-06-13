@@ -78,14 +78,14 @@ class CowswapService {
             }
       );
 
-      const sellAmountBeforeFee = BigInt(quote.quote.sellAmount);
-      const sellAmountAfterFee = BigInt(quote.quote.sellAmount) + BigInt(quote.quote.feeAmount);
-      const buyAmountBeforeFee = BigInt(quote.quote.buyAmount);
-      const buyAmountAfterFee = (buyAmountBeforeFee * sellAmountAfterFee) / sellAmountBeforeFee;
+      // const sellAmountBeforeFee = BigInt(quote.quote.sellAmount);
+      // const sellAmountAfterFee = BigInt(quote.quote.sellAmount) + BigInt(quote.quote.feeAmount);
+      // const buyAmountBeforeFee = BigInt(quote.quote.buyAmount);
+      // const buyAmountAfterFee = (buyAmountBeforeFee * sellAmountAfterFee) / sellAmountBeforeFee;
 
       const response: QuoteResponseModel = {
         originalQuote: quote,
-        amountTo: buyAmountAfterFee.toString(),
+        amountTo: quote.quote.buyAmount,
         quoteSource: "COWSWAP",
       };
 
