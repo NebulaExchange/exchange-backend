@@ -12,6 +12,7 @@ export interface QuoteRequestModel {
   appData?: string;
   isSmartContractWallet?: boolean; //backwards compatibility with sky.money
   isNative?: boolean; //backwards compatibility with sky.money
+  requestId?: string; //optional, useful for tracking and auditing
 }
 
 export type QuoteKind = "EXACT_INPUT" | "EXACT_OUTPUT";

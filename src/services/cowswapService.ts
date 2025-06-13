@@ -84,11 +84,11 @@ class CowswapService {
         quoteSource: "COWSWAP",
       };
 
-      await auditService.LogQuote(request, response);
+      await auditService.LogQuote(request.requestId!, response);
       return response;
     } catch (error: any) {
       const errorMessage = error?.body?.errorType ?? error?.message ?? String(error);
-      await auditService.LogQuoteFailure(request, "COWSWAP", errorMessage);
+      await auditService.LogQuoteFailure(request.requestId!, "COWSWAP", errorMessage);
       return null;
     }
   }

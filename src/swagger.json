@@ -472,6 +472,9 @@
 					},
 					"isNative": {
 						"type": "boolean"
+					},
+					"requestId": {
+						"type": "string"
 					}
 				},
 				"required": [

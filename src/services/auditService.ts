@@ -1,19 +1,43 @@
 import { QuoteResponseModel } from "../models/QuoteResponseModel";
 import { QuoteRequestModel } from "../models/QuoteRequestModel";
 import { getAppInsightsClient } from '../config/appInsights';
+import { tokenService } from "./tokenService";
+import { request } from "http";
 
 class AuditService {
+  async LogQuoteRequest(
+    request: QuoteRequestModel
+  ): Promise<void> {
+    const client = getAppInsightsClient();
+    var tokenFrom = tokenService.GetTokenByAddress(request.tokenFrom);
+    var tokenTo = tokenService.GetTokenByAddress(request.tokenTo);
+
+    client.trackEvent({
+      name: "QuoteRequest",
+      properties: {
+        requestId: request.requestId!,
+        tokenFrom: request.tokenFrom,
+        tokenFromName: tokenFrom?.name,
+        tokenFromDecimals: tokenFrom?.decimals,
+        tokenTo: request.tokenTo,
+        tokenToName: tokenTo?.name,
+        tokenToDecimals: tokenTo?.decimals,
+        amountFrom: request.amount,
+        timestamp: new Date(),
+      },
+    });
+  }
+
   async LogQuote(
-    request: QuoteRequestModel,
+    requestId: string,
     response: QuoteResponseModel
   ): Promise<void> {
     const client = getAppInsightsClient();
     client.trackEvent({
-      name: "Quote",
+      name: "QuoteResponse",
       properties: {
-        tokenFrom: request.tokenFrom,
-        tokenTo: request.tokenTo,
-        amount: response.amountTo,
+        requestId: requestId,
+        amountTo: response.amountTo,
         status: "OK",
         source: response.quoteSource,
         timestamp: new Date(),
@@ -22,16 +46,15 @@ class AuditService {
   }
 
   async LogQuoteFailure(
-    request: QuoteRequestModel,
+    requestId: string,
     source: string,
     error: string
   ): Promise<void> {
     const client = getAppInsightsClient();
     client.trackEvent({
-      name: "Quote",
-      properties: {
-        tokenFrom: request.tokenFrom,
-        tokenTo: request.tokenTo,
+      name: "QuoteResponse",
+       properties: {
+        requestId: requestId,
         status: "Error",
         source: source,
         error: error,

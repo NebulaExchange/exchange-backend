@@ -4,14 +4,14 @@ import {
   Route,
   Tags,
   Body,
-  SuccessResponse,
   Response,
-  Example,
 } from 'tsoa';
 import { QuoteRequestModel } from '../models/QuoteRequestModel';
 import { cowswapService } from '../services/cowswapService';
 import { nearintentService } from '../services/nearIntentService';
 import { QuoteResponseModel } from '../models/QuoteResponseModel';
+import { v4 as uuidv4 } from 'uuid';
+import { auditService } from '../services/auditService';
 
 @Route("quote")
 @Tags("Quote")
@@ -22,8 +22,13 @@ export class QuoteController extends Controller {
   public async getQuote(
     @Body() request: QuoteRequestModel
   ): Promise<QuoteResponseModel | { error: string }> {
-    const cowQuote = await cowswapService.GetQuote(request);
-    const nearQuote = await nearintentService.GetQuote(request);
+    if (!request.requestId) request.requestId = uuidv4(); //if no request id was passed in, initialize our own
+    auditService.LogQuoteRequest(request);
+
+    const [cowQuote, nearQuote] = await Promise.all([
+      cowswapService.GetQuote(request),
+      nearintentService.GetQuote(request)
+    ]);
 
     if (nearQuote) return nearQuote;
     if (cowQuote) return cowQuote;

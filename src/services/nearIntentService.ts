@@ -59,11 +59,11 @@ class NearIntentService {
         quoteSource: "NEARINTENTS",
       };
 
-      await auditService.LogQuote(request, response);
+      await auditService.LogQuote(request.requestId!, response);
       return response;
     } catch (error: any) {
       const errorMessage = error?.message ?? String(error);
-      await auditService.LogQuoteFailure(request, "NEARINTENTS", errorMessage);
+      await auditService.LogQuoteFailure(request.requestId!, "NEARINTENTS", errorMessage);
       return null;
     }
   }

@@ -140,6 +140,7 @@ const models: TsoaRoute.Models = {
             "appData": {"dataType":"string"},
             "isSmartContractWallet": {"dataType":"boolean"},
             "isNative": {"dataType":"boolean"},
+            "requestId": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
