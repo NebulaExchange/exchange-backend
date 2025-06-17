@@ -40,8 +40,8 @@ class NearIntentService {
         refundType: QuoteRequest.refundType.ORIGIN_CHAIN,
         recipient: request.accountTo ?? request.accountFrom,
         recipientType: QuoteRequest.recipientType.DESTINATION_CHAIN,
-        appFees: !!process.env.NEAR_INTENT_FEE_ADDRESS
-          ? [{ fee: 1, recipient: process.env.NEAR_INTENT_FEE_ADDRESS }]
+        appFees: (!!process.env.NEAR_INTENT_FEE_ADDRESS && !!process.env.NEAR_INTENT_FEE_BIPS)
+          ? [{ fee: Number(process.env.NEAR_INTENT_FEE_BIPS), recipient: process.env.NEAR_INTENT_FEE_ADDRESS }]
           : undefined,
       };
 
