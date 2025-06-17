@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@cowprotocol/cow-sdk": "^5.10.3",
-    "@defuse-protocol/one-click-sdk-typescript": "^0.1.1",
+    "@defuse-protocol/one-click-sdk-typescript": "^0.1.5",
     "applicationinsights": "^3.7.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
