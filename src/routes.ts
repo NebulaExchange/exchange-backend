@@ -94,14 +94,19 @@ const models: TsoaRoute.Models = {
         "enums": ["DESTINATION_CHAIN","INTENTS"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AppFee": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"fee":{"dataType":"double","required":true},"recipient":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "QuoteRequest": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"quoteWaitingTimeMs":{"dataType":"double"},"referral":{"dataType":"string"},"deadline":{"dataType":"string","required":true},"recipientType":{"ref":"QuoteRequest.recipientType","required":true},"recipient":{"dataType":"string","required":true},"refundType":{"ref":"QuoteRequest.refundType","required":true},"refundTo":{"dataType":"string","required":true},"amount":{"dataType":"string","required":true},"destinationAsset":{"dataType":"string","required":true},"depositType":{"ref":"QuoteRequest.depositType","required":true},"originAsset":{"dataType":"string","required":true},"slippageTolerance":{"dataType":"double","required":true},"swapType":{"ref":"QuoteRequest.swapType","required":true},"dry":{"dataType":"boolean","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"appFees":{"dataType":"array","array":{"dataType":"refAlias","ref":"AppFee"}},"quoteWaitingTimeMs":{"dataType":"double"},"referral":{"dataType":"string"},"deadline":{"dataType":"string","required":true},"recipientType":{"ref":"QuoteRequest.recipientType","required":true},"recipient":{"dataType":"string","required":true},"refundType":{"ref":"QuoteRequest.refundType","required":true},"refundTo":{"dataType":"string","required":true},"amount":{"dataType":"string","required":true},"destinationAsset":{"dataType":"string","required":true},"depositType":{"ref":"QuoteRequest.depositType","required":true},"originAsset":{"dataType":"string","required":true},"slippageTolerance":{"dataType":"double","required":true},"swapType":{"ref":"QuoteRequest.swapType","required":true},"dry":{"dataType":"boolean","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Quote": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"timeEstimate":{"dataType":"double"},"timeWhenInactive":{"dataType":"string"},"deadline":{"dataType":"string"},"minAmountOut":{"dataType":"string","required":true},"amountOutUsd":{"dataType":"string","required":true},"amountOutFormatted":{"dataType":"string","required":true},"amountOut":{"dataType":"string","required":true},"minAmountIn":{"dataType":"string","required":true},"amountInUsd":{"dataType":"string","required":true},"amountInFormatted":{"dataType":"string","required":true},"amountIn":{"dataType":"string","required":true},"depositAddress":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"timeEstimate":{"dataType":"double","required":true},"timeWhenInactive":{"dataType":"string"},"deadline":{"dataType":"string"},"minAmountOut":{"dataType":"string","required":true},"amountOutUsd":{"dataType":"string","required":true},"amountOutFormatted":{"dataType":"string","required":true},"amountOut":{"dataType":"string","required":true},"minAmountIn":{"dataType":"string","required":true},"amountInUsd":{"dataType":"string","required":true},"amountInFormatted":{"dataType":"string","required":true},"amountIn":{"dataType":"string","required":true},"depositAddress":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "NearIntentsQuote": {

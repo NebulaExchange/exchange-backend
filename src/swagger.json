@@ -190,7 +190,7 @@
 				"description": "An order quoted by the backend that can be directly signed and\r\nsubmitted to the order creation backend."
 			},
 			"QuoteRequest.swapType": {
-				"description": "<p>Whether to use the amount as the output or the input for the basis of the swap:<ul>\n<li><code>EXACT_INPUT</code> - request output amount for exact input.</li>\n<li><code>EXACT_OUTPUT</code> - request output amount for exact output. The <code>refundTo</code> address will always receive excess tokens back even after the swap is complete.</li>\n</ul></p>",
+				"description": "Whether to use the amount as the output or the input for the basis of the swap:\n- `EXACT_INPUT` - request output amount for exact input.\n- `EXACT_OUTPUT` - request output amount for exact output. The `refundTo` address will always receive excess tokens back even after the swap is complete.",
 				"enum": [
 					"EXACT_INPUT",
 					"EXACT_OUTPUT"
@@ -198,7 +198,7 @@
 				"type": "string"
 			},
 			"QuoteRequest.depositType": {
-				"description": "<p>Type of the deposit address:<ul>\n<li><code>ORIGIN_CHAIN</code> - deposit address on the origin chain</li>\n<li><code>INTENTS</code> - <strong>account ID</strong> inside near intents to which you should transfer assets inside intents.</li>\n</ul></p>",
+				"description": "Type of the deposit address:\n- `ORIGIN_CHAIN` - deposit address on the origin chain\n- `INTENTS` - **account ID** inside near intents to which you should transfer assets inside intents.",
 				"enum": [
 					"ORIGIN_CHAIN",
 					"INTENTS"
@@ -206,7 +206,7 @@
 				"type": "string"
 			},
 			"QuoteRequest.refundType": {
-				"description": "<p>Type of refund address:<ul>\n<li><code>ORIGIN_CHAIN</code> - assets will be refunded to <code>refundTo</code> address on the origin chain</li>\n<li><code>INTENTS</code> - assets will be refunded to <code>refundTo</code> intents account</li>\n</ul></p>",
+				"description": "Type of refund address:\n- `ORIGIN_CHAIN` - assets will be refunded to `refundTo` address on the origin chain\n- `INTENTS` - assets will be refunded to `refundTo` intents account",
 				"enum": [
 					"ORIGIN_CHAIN",
 					"INTENTS"
@@ -214,15 +214,40 @@
 				"type": "string"
 			},
 			"QuoteRequest.recipientType": {
-				"description": "<p>Type of recipient address:<ul>\n<li><code>DESTINATION_CHAIN</code> - assets will be transferred to chain of <code>destinationAsset</code></li>\n<li><code>INTENTS</code> - assets will be transferred to account inside intents</li>\n</ul></p>",
+				"description": "Type of recipient address:\n- `DESTINATION_CHAIN` - assets will be transferred to chain of `destinationAsset`\n- `INTENTS` - assets will be transferred to account inside intents",
 				"enum": [
 					"DESTINATION_CHAIN",
 					"INTENTS"
 				],
 				"type": "string"
 			},
+			"AppFee": {
+				"properties": {
+					"fee": {
+						"type": "number",
+						"format": "double",
+						"description": "Fee for this recipient as part of amountIn in basis points (1/100th of a percent), e.g. 100 for 1% fee"
+					},
+					"recipient": {
+						"type": "string",
+						"description": "Intents Account ID where this fee will be transferred to"
+					}
+				},
+				"required": [
+					"fee",
+					"recipient"
+				],
+				"type": "object"
+			},
 			"QuoteRequest": {
 				"properties": {
+					"appFees": {
+						"items": {
+							"$ref": "#/components/schemas/AppFee"
+						},
+						"type": "array",
+						"description": "List of recipients and their fees"
+					},
 					"quoteWaitingTimeMs": {
 						"type": "number",
 						"format": "double",
@@ -230,7 +255,7 @@
 					},
 					"referral": {
 						"type": "string",
-						"description": "Referral identifier"
+						"description": "Referral identifier(lower case only)"
 					},
 					"deadline": {
 						"type": "string",
@@ -238,15 +263,15 @@
 					},
 					"recipientType": {
 						"$ref": "#/components/schemas/QuoteRequest.recipientType",
-						"description": "<p>Type of recipient address:<ul>\n<li><code>DESTINATION_CHAIN</code> - assets will be transferred to chain of <code>destinationAsset</code></li>\n<li><code>INTENTS</code> - assets will be transferred to account inside intents</li>\n</ul></p>"
+						"description": "Type of recipient address:\n- `DESTINATION_CHAIN` - assets will be transferred to chain of `destinationAsset`\n- `INTENTS` - assets will be transferred to account inside intents"
 					},
 					"recipient": {
 						"type": "string",
-						"description": "Recipient address. The format should match <code>recipientType</code>."
+						"description": "Recipient address. The format should match `recipientType`."
 					},
 					"refundType": {
 						"$ref": "#/components/schemas/QuoteRequest.refundType",
-						"description": "<p>Type of refund address:<ul>\n<li><code>ORIGIN_CHAIN</code> - assets will be refunded to <code>refundTo</code> address on the origin chain</li>\n<li><code>INTENTS</code> - assets will be refunded to <code>refundTo</code> intents account</li>\n</ul></p>"
+						"description": "Type of refund address:\n- `ORIGIN_CHAIN` - assets will be refunded to `refundTo` address on the origin chain\n- `INTENTS` - assets will be refunded to `refundTo` intents account"
 					},
 					"refundTo": {
 						"type": "string",
@@ -262,7 +287,7 @@
 					},
 					"depositType": {
 						"$ref": "#/components/schemas/QuoteRequest.depositType",
-						"description": "<p>Type of the deposit address:<ul>\n<li><code>ORIGIN_CHAIN</code> - deposit address on the origin chain</li>\n<li><code>INTENTS</code> - <strong>account ID</strong> inside near intents to which you should transfer assets inside intents.</li>\n</ul></p>"
+						"description": "Type of the deposit address:\n- `ORIGIN_CHAIN` - deposit address on the origin chain\n- `INTENTS` - **account ID** inside near intents to which you should transfer assets inside intents."
 					},
 					"originAsset": {
 						"type": "string",
@@ -275,11 +300,11 @@
 					},
 					"swapType": {
 						"$ref": "#/components/schemas/QuoteRequest.swapType",
-						"description": "<p>Whether to use the amount as the output or the input for the basis of the swap:<ul>\n<li><code>EXACT_INPUT</code> - request output amount for exact input.</li>\n<li><code>EXACT_OUTPUT</code> - request output amount for exact output. The <code>refundTo</code> address will always receive excess tokens back even after the swap is complete.</li>\n</ul></p>"
+						"description": "Whether to use the amount as the output or the input for the basis of the swap:\n- `EXACT_INPUT` - request output amount for exact input.\n- `EXACT_OUTPUT` - request output amount for exact output. The `refundTo` address will always receive excess tokens back even after the swap is complete."
 					},
 					"dry": {
 						"type": "boolean",
-						"description": "<p>Flag indicating whether this is a dry run request.</p>\n<p>If <code>true</code>, the response will <strong>NOT</strong> contain the following fields:<ul>\n<li><code>depositAddress</code></li>\n<li><code>timeWhenInactive</code></li>\n<li><code>timeEstimate</code></li>\n<li><code>deadline</code></li>\n</ul></p>"
+						"description": "Flag indicating whether this is a dry run request.\nIf `true`, the response will **NOT** contain the following fields:\n- `depositAddress`\n- `timeWhenInactive`\n- `deadline`"
 					}
 				},
 				"required": [
@@ -347,10 +372,11 @@
 					},
 					"depositAddress": {
 						"type": "string",
-						"description": "<p>The deposit address on the chain of <code>originAsset</code> in case if <code>depositType</code> is <code>ORIGIN_CHAIN</code>.</p>\n<p>The deposit address inside of near intents (the verifier smart contract) in case if <code>depositType</code> is <code>INTENTS</code>.</p>"
+						"description": "The deposit address on the chain of `originAsset` in case if `depositType` is `ORIGIN_CHAIN`.\n\nThe deposit address inside of near intents (the verifier smart contract) in case if `depositType` is `INTENTS`."
 					}
 				},
 				"required": [
+					"timeEstimate",
 					"minAmountOut",
 					"amountOutUsd",
 					"amountOutFormatted",
@@ -366,7 +392,7 @@
 				"properties": {
 					"quote": {
 						"$ref": "#/components/schemas/Quote",
-						"description": "Response that contains the deposit address to send \"amount\" of <code>originAsset</code> and possible output amount."
+						"description": "Response that contains the deposit address to send \"amount\" of `originAsset` and possible output amount."
 					},
 					"quoteRequest": {
 						"$ref": "#/components/schemas/QuoteRequest",
