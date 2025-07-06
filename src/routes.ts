@@ -29,6 +29,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TokenPriceModel": {
+        "dataType": "refObject",
+        "properties": {
+            "symbol": {"dataType":"string","required":true},
+            "price": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Address": {
         "dataType": "refAlias",
         "type": {"dataType":"string","validators":{}},
@@ -185,6 +194,35 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getTokens',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTokenController_getTokenPrices: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/tokens/prices',
+            ...(fetchMiddlewares<RequestHandler>(TokenController)),
+            ...(fetchMiddlewares<RequestHandler>(TokenController.prototype.getTokenPrices)),
+
+            async function TokenController_getTokenPrices(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTokenController_getTokenPrices, request, response });
+
+                const controller = new TokenController();
+
+              await templateService.apiHandler({
+                methodName: 'getTokenPrices',
                 controller,
                 response,
                 next,

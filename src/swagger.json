@@ -41,6 +41,23 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"TokenPriceModel": {
+				"properties": {
+					"symbol": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"symbol",
+					"price"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Address": {
 				"type": "string",
 				"description": "20 byte Ethereum address encoded as a hex with `0x` prefix."
@@ -543,6 +560,31 @@
 								"schema": {
 									"items": {
 										"$ref": "#/components/schemas/TokenModel"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tokens"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/tokens/prices": {
+			"get": {
+				"operationId": "GetTokenPrices",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/TokenPriceModel"
 									},
 									"type": "array"
 								}
