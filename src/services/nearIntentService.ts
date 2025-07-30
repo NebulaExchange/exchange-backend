@@ -12,12 +12,12 @@ class NearIntentService {
     request: QuoteRequestModel
   ): Promise<QuoteResponseModel | null> {
     try {
-      const originAsset = this.mapToNearAsset(
+      const originAsset = this.MapToNearAsset(
         request.chainFrom ?? "eth",
         request.tokenFrom
       );
 
-      const destinationAsset = this.mapToNearAsset(
+      const destinationAsset = this.MapToNearAsset(
         request.chainTo ?? "eth",
         request.tokenTo
       );
@@ -33,13 +33,13 @@ class NearIntentService {
             : QuoteRequest.swapType.EXACT_OUTPUT,
         slippageTolerance: request.slippage * 100,
         originAsset: originAsset,
-        depositType: QuoteRequest.depositType.ORIGIN_CHAIN,
+        depositType: request.depositNative === false ? QuoteRequest.depositType.INTENTS : QuoteRequest.depositType.ORIGIN_CHAIN,
         destinationAsset: destinationAsset,
         amount: request.amount,
         refundTo: request.accountFrom,
-        refundType: QuoteRequest.refundType.ORIGIN_CHAIN,
+        refundType: request.depositNative === false ? QuoteRequest.refundType.INTENTS : QuoteRequest.refundType.ORIGIN_CHAIN,
         recipient: request.accountTo ?? request.accountFrom,
-        recipientType: QuoteRequest.recipientType.DESTINATION_CHAIN,
+        recipientType: request.recipientNative === false ? QuoteRequest.recipientType.INTENTS : QuoteRequest.recipientType.DESTINATION_CHAIN,
         appFees: (!!process.env.NEAR_INTENT_FEE_ADDRESS && !!process.env.NEAR_INTENT_FEE_BIPS)
           ? [{ fee: Number(process.env.NEAR_INTENT_FEE_BIPS), recipient: process.env.NEAR_INTENT_FEE_ADDRESS }]
           : undefined,
@@ -47,11 +47,11 @@ class NearIntentService {
 
       // Get quote
       const quote = await OneClickService.getQuote(quoteRequest);
-      quote.quoteRequest.originAsset = this.mapFromNearAsset({
+      quote.quoteRequest.originAsset = this.MapFromNearAsset({
         assetId: quote.quoteRequest.originAsset,
         blockchain: request.chainFrom,
       });
-      quote.quoteRequest.destinationAsset = this.mapFromNearAsset({
+      quote.quoteRequest.destinationAsset = this.MapFromNearAsset({
         assetId: quote.quoteRequest.destinationAsset,
         blockchain: request.chainTo,
       });
@@ -91,7 +91,7 @@ class NearIntentService {
     try {
       var tokens = NearIntentTokens.map((t) => {
         return {
-          address: this.mapFromNearAsset(t),
+          address: this.MapFromNearAsset(t),
           chain: t.blockchain,
           decimals: t.decimals,
           name: t.symbol,
@@ -107,7 +107,7 @@ class NearIntentService {
     }
   }
 
-  mapToNearAsset(blockchain: string, contractAddress: string): string {
+  MapToNearAsset(blockchain: string, contractAddress: string): string {
     const mappedToken =
       tokenMap[blockchain]?.[contractAddress.toLowerCase()] || null;
     if (mappedToken) return mappedToken;
@@ -116,7 +116,7 @@ class NearIntentService {
     return `nep141:${nep141Chain}${contractAddress.toLowerCase()}.omft.near`.toLowerCase();
   }
 
-  mapFromNearAsset(t: { assetId: string; blockchain: string }): string {
+  MapFromNearAsset(t: { assetId: string; blockchain: string }): string {
     const mappedToken = tokenMapInverse[t.blockchain]?.[t.assetId] || null;
     if (mappedToken) return mappedToken;
 

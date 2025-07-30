@@ -6,6 +6,8 @@ export interface QuoteRequestModel {
   accountTo?: string;
   tokenTo: string;
   chainTo: string;
+  depositNative?: boolean;
+  recipientNative?: boolean;
   slippage: number; //used in NEAR Intents
   kind: QuoteKind;
   ttl: number;

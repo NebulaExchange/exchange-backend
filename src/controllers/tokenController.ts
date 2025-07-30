@@ -4,6 +4,8 @@ import {
   Route,
   Tags,
   Response,
+  Path,
+  Query,
 } from 'tsoa';
 import { tokenService } from '../services/tokenService';
 import { tokenPriceService } from '../services/tokenPriceService';
@@ -17,6 +19,17 @@ export class TokenController extends Controller {
   @Response<TokenModel[]>("200", "Tokens successfully retrieved")
   public getTokens(): TokenModel[] {
     return tokenService.GetTokens();
+  }
+
+  @Get("/{address}")
+  public getToken(
+    @Path() address: string,
+    @Query() chain?: string
+  ): TokenModel | null {
+    const token = tokenService.GetTokenByAddress(address, chain);
+    if (!token) this.setStatus(404);
+
+    return token;
   }
 
   @Get("/prices")

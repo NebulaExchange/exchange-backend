@@ -8,6 +8,8 @@ import { TokenController } from './controllers/tokenController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { QuoteController } from './controllers/quoteController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { NearIntentsController } from './controllers/nearIntentsController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { HealthController } from './controllers/healthController';
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
 
@@ -148,6 +150,8 @@ const models: TsoaRoute.Models = {
             "accountTo": {"dataType":"string"},
             "tokenTo": {"dataType":"string","required":true},
             "chainTo": {"dataType":"string","required":true},
+            "depositNative": {"dataType":"boolean"},
+            "recipientNative": {"dataType":"boolean"},
             "slippage": {"dataType":"double","required":true},
             "kind": {"ref":"QuoteKind","required":true},
             "ttl": {"dataType":"double","required":true},
@@ -194,6 +198,37 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getTokens',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTokenController_getToken: Record<string, TsoaRoute.ParameterSchema> = {
+                address: {"in":"path","name":"address","required":true,"dataType":"string"},
+                chain: {"in":"query","name":"chain","dataType":"string"},
+        };
+        app.get('/tokens/:address',
+            ...(fetchMiddlewares<RequestHandler>(TokenController)),
+            ...(fetchMiddlewares<RequestHandler>(TokenController.prototype.getToken)),
+
+            async function TokenController_getToken(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTokenController_getToken, request, response });
+
+                const controller = new TokenController();
+
+              await templateService.apiHandler({
+                methodName: 'getToken',
                 controller,
                 response,
                 next,
@@ -253,6 +288,37 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getQuote',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsNearIntentsController_getToken: Record<string, TsoaRoute.ParameterSchema> = {
+                address: {"in":"path","name":"address","required":true,"dataType":"string"},
+                chain: {"in":"path","name":"chain","required":true,"dataType":"string"},
+        };
+        app.get('/near/:address/:chain',
+            ...(fetchMiddlewares<RequestHandler>(NearIntentsController)),
+            ...(fetchMiddlewares<RequestHandler>(NearIntentsController.prototype.getToken)),
+
+            async function NearIntentsController_getToken(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsNearIntentsController_getToken, request, response });
+
+                const controller = new NearIntentsController();
+
+              await templateService.apiHandler({
+                methodName: 'getToken',
                 controller,
                 response,
                 next,

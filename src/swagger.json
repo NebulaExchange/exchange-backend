@@ -496,6 +496,12 @@
 					"chainTo": {
 						"type": "string"
 					},
+					"depositNative": {
+						"type": "boolean"
+					},
+					"recipientNative": {
+						"type": "boolean"
+					},
 					"slippage": {
 						"type": "number",
 						"format": "double"
@@ -572,6 +578,50 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/tokens/{address}": {
+			"get": {
+				"operationId": "GetToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/TokenModel"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tokens"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "address",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "chain",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/tokens/prices": {
@@ -662,6 +712,45 @@
 						}
 					}
 				}
+			}
+		},
+		"/near/{address}/{chain}": {
+			"get": {
+				"operationId": "GetToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"NEAR"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "address",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "chain",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/health": {
