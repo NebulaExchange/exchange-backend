@@ -6,6 +6,8 @@ import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TokenController } from './controllers/tokenController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { SwapController } from './controllers/swapController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { QuoteController } from './controllers/quoteController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { HealthController } from './controllers/healthController';
@@ -25,6 +27,19 @@ const models: TsoaRoute.Models = {
             "decimals": {"dataType":"double","required":true},
             "chain": {"dataType":"string","required":true},
             "logoURI": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SwapStatusModel": {
+        "dataType": "refObject",
+        "properties": {
+            "status": {"dataType":"string","required":true},
+            "sourceChainHashes": {"dataType":"array","array":{"dataType":"string"}},
+            "sourceChainTxUrls": {"dataType":"array","array":{"dataType":"string"}},
+            "processorHashes": {"dataType":"array","array":{"dataType":"string"}},
+            "targetChainHashes": {"dataType":"array","array":{"dataType":"string"}},
+            "targetChainTxUrls": {"dataType":"array","array":{"dataType":"string"}},
         },
         "additionalProperties": false,
     },
@@ -185,6 +200,36 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getTokens',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsSwapController_getSwapStatus: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/swap/status/:id',
+            ...(fetchMiddlewares<RequestHandler>(SwapController)),
+            ...(fetchMiddlewares<RequestHandler>(SwapController.prototype.getSwapStatus)),
+
+            async function SwapController_getSwapStatus(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsSwapController_getSwapStatus, request, response });
+
+                const controller = new SwapController();
+
+              await templateService.apiHandler({
+                methodName: 'getSwapStatus',
                 controller,
                 response,
                 next,
