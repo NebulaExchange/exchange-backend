@@ -209,6 +209,35 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTokenController_getTokenPrices: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/tokens/prices',
+            ...(fetchMiddlewares<RequestHandler>(TokenController)),
+            ...(fetchMiddlewares<RequestHandler>(TokenController.prototype.getTokenPrices)),
+
+            async function TokenController_getTokenPrices(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTokenController_getTokenPrices, request, response });
+
+                const controller = new TokenController();
+
+              await templateService.apiHandler({
+                methodName: 'getTokenPrices',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsTokenController_getToken: Record<string, TsoaRoute.ParameterSchema> = {
                 address: {"in":"path","name":"address","required":true,"dataType":"string"},
                 chain: {"in":"query","name":"chain","dataType":"string"},
@@ -229,35 +258,6 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getToken',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsTokenController_getTokenPrices: Record<string, TsoaRoute.ParameterSchema> = {
-        };
-        app.get('/tokens/prices',
-            ...(fetchMiddlewares<RequestHandler>(TokenController)),
-            ...(fetchMiddlewares<RequestHandler>(TokenController.prototype.getTokenPrices)),
-
-            async function TokenController_getTokenPrices(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsTokenController_getTokenPrices, request, response });
-
-                const controller = new TokenController();
-
-              await templateService.apiHandler({
-                methodName: 'getTokenPrices',
                 controller,
                 response,
                 next,

@@ -21,6 +21,12 @@ export class TokenController extends Controller {
     return tokenService.GetTokens();
   }
 
+  @Get("/prices")
+  @Response<TokenPriceModel[]>("200", "Prices successfully retrieved")
+  public async getTokenPrices(): Promise<TokenPriceModel[]> {
+    return await tokenPriceService.getTokenPrices();
+  }
+
   @Get("/{address}")
   public getToken(
     @Path() address: string,
@@ -30,11 +36,5 @@ export class TokenController extends Controller {
     if (!token) this.setStatus(404);
 
     return token;
-  }
-
-  @Get("/prices")
-  @Response<TokenPriceModel[]>("200", "Prices successfully retrieved")
-  public async getTokenPrices(): Promise<TokenPriceModel[]> {
-    return await tokenPriceService.getTokenPrices();
   }
 }
