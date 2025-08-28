@@ -58,6 +58,48 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SwapStatusModel": {
+				"properties": {
+					"status": {
+						"type": "string"
+					},
+					"sourceChainHashes": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"sourceChainTxUrls": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"processorHashes": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"targetChainHashes": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"targetChainTxUrls": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Address": {
 				"type": "string",
 				"description": "20 byte Ethereum address encoded as a hex with `0x` prefix."
@@ -642,6 +684,40 @@
 						"in": "query",
 						"name": "chain",
 						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/swap/status/{id}": {
+			"get": {
+				"operationId": "GetSwapStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SwapStatusModel"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "No swap found"
+					}
+				},
+				"tags": [
+					"Swap"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
 						"schema": {
 							"type": "string"
 						}

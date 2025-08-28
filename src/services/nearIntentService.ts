@@ -6,6 +6,7 @@ import NearIntentTokens from '../data/nearIntentTokens';
 import { NearIntentsOrder } from '../models/OrderRequestModel';
 import { OrderResponseModel } from '../models/OrderResponseModel';
 import { auditService } from '../services/auditService';
+import { SwapStatusModel } from '../models/SwapStatusModel';
 
 class NearIntentService {
   async GetQuote(
@@ -40,9 +41,16 @@ class NearIntentService {
         refundType: request.depositNative === false ? QuoteRequest.refundType.INTENTS : QuoteRequest.refundType.ORIGIN_CHAIN,
         recipient: request.accountTo ?? request.accountFrom,
         recipientType: request.recipientNative === false ? QuoteRequest.recipientType.INTENTS : QuoteRequest.recipientType.DESTINATION_CHAIN,
-        appFees: (!!process.env.NEAR_INTENT_FEE_ADDRESS && !!process.env.NEAR_INTENT_FEE_BIPS)
-          ? [{ fee: Number(process.env.NEAR_INTENT_FEE_BIPS), recipient: process.env.NEAR_INTENT_FEE_ADDRESS }]
-          : undefined,
+        appFees:
+          !!process.env.NEAR_INTENT_FEE_ADDRESS &&
+          !!process.env.NEAR_INTENT_FEE_BIPS
+            ? [
+                {
+                  fee: Number(process.env.NEAR_INTENT_FEE_BIPS),
+                  recipient: process.env.NEAR_INTENT_FEE_ADDRESS,
+                },
+              ]
+            : undefined,
       };
 
       // Get quote
@@ -66,7 +74,11 @@ class NearIntentService {
       return response;
     } catch (error: any) {
       const errorMessage = error?.message ?? String(error);
-      await auditService.LogQuoteFailure(request.requestId!, "NEARINTENTS", errorMessage);
+      await auditService.LogQuoteFailure(
+        request.requestId!,
+        "NEARINTENTS",
+        errorMessage
+      );
       return null;
     }
   }
@@ -104,6 +116,33 @@ class NearIntentService {
     } catch (error) {
       console.log(error);
       return [];
+    }
+  }
+
+  async GetStatus(id: string): Promise<SwapStatusModel | undefined> {
+    try {
+      const status = await OneClickService.getExecutionStatus(id);
+      if (!status) return undefined;
+
+      return {
+        status: status.status,
+        processorHashes: status.swapDetails?.intentHashes,
+        sourceChainHashes: status.swapDetails?.originChainTxHashes?.map(
+          (tx) => tx.hash
+        ),
+        sourceChainTxUrls: status.swapDetails?.originChainTxHashes?.map(
+          (tx) => tx.explorerUrl
+        ),
+        targetChainHashes: status.swapDetails?.destinationChainTxHashes?.map(
+          (tx) => tx.hash
+        ),
+        targetChainTxUrls: status.swapDetails?.destinationChainTxHashes?.map(
+          (tx) => tx.explorerUrl
+        ),
+      };
+    } catch (error) {
+      console.log(error);
+      return undefined;
     }
   }
 

@@ -16,9 +16,11 @@ class AuditService {
       properties: {
         requestId: request.requestId!,
         tokenFrom: request.tokenFrom,
+        chainFrom: request.chainFrom,
         tokenFromName: tokenFrom?.name ?? "",
         tokenFromDecimals: tokenFrom?.decimals ?? 1,
         tokenTo: request.tokenTo,
+        chainTo: request.chainTo,
         tokenToName: tokenTo?.name ?? "",
         tokenToDecimals: tokenTo?.decimals ?? 1,
         amountFrom: request.amount,
