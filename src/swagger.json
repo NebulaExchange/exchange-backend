@@ -480,6 +480,10 @@
 						"type": "string",
 						"example": "10000"
 					},
+					"amountFrom": {
+						"type": "string",
+						"example": "100000000000"
+					},
 					"originalQuote": {
 						"anyOf": [
 							{
@@ -502,6 +506,7 @@
 				},
 				"required": [
 					"amountTo",
+					"amountFrom",
 					"originalQuote",
 					"quoteSource"
 				],

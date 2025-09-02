@@ -144,6 +144,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "amountTo": {"dataType":"string","required":true},
+            "amountFrom": {"dataType":"string","required":true},
             "originalQuote": {"dataType":"union","subSchemas":[{"ref":"CowswapQuote"},{"ref":"NearIntentsQuote"}],"required":true},
             "quoteSource": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["NEARINTENTS"]},{"dataType":"enum","enums":["COWSWAP"]},{"dataType":"enum","enums":["1INCH"]}],"required":true},
         },
