@@ -67,6 +67,7 @@ class NearIntentService {
       const response: QuoteResponseModel = {
         originalQuote: quote,
         amountTo: quote.quote.amountOut,
+        amountFrom: quote.quote.amountIn,
         quoteSource: "NEARINTENTS",
       };
 

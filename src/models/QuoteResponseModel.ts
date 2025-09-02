@@ -5,6 +5,8 @@ import { QuoteResponse as NearIntentsQuote } from "@defuse-protocol/one-click-sd
 export class QuoteResponseModel {
   @Example("10000")
   public amountTo!: string;
+  @Example("100000000000")
+  public amountFrom!: string;
 
   public originalQuote!: CowswapQuote | NearIntentsQuote;
 
