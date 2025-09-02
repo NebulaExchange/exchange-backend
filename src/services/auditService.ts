@@ -23,7 +23,8 @@ class AuditService {
         chainTo: request.chainTo,
         tokenToName: tokenTo?.name ?? "",
         tokenToDecimals: tokenTo?.decimals ?? 1,
-        amountFrom: request.amount,
+        amountFrom: request.kind === "EXACT_INPUT" ? request.amount : "0",
+        amountTo: request.kind === "EXACT_INPUT" ? "0" : request.amount,
         timestamp: new Date(),
       },
     });
@@ -38,6 +39,7 @@ class AuditService {
       name: "QuoteResponse",
       properties: {
         requestId: requestId,
+        amountFrom: response.amountFrom,
         amountTo: response.amountTo,
         status: "OK",
         source: response.quoteSource,
