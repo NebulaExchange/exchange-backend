@@ -86,6 +86,7 @@ class CowswapService {
       const response: QuoteResponseModel = {
         originalQuote: quote,
         amountTo: quote.quote.buyAmount,
+        amountFrom: quote.quote.sellAmount,
         quoteSource: "COWSWAP",
       };
 
