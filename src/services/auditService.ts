@@ -8,8 +8,8 @@ class AuditService {
     request: QuoteRequestModel
   ): Promise<void> {
     const client = getAppInsightsClient();
-    var tokenFrom = tokenService.GetTokenByAddress(request.tokenFrom);
-    var tokenTo = tokenService.GetTokenByAddress(request.tokenTo);
+    var tokenFrom = tokenService.GetTokenByAddress(request.tokenFrom, request.chainFrom);
+    var tokenTo = tokenService.GetTokenByAddress(request.tokenTo, request.chainTo);
 
     client.trackEvent({
       name: "QuoteRequest",
